@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사주 분석 시스템</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; margin-bottom: 30px; text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .checkbox-group { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .checkbox-group h3 { margin-bottom: 15px; color: #333; font-size: 14px; }
+        .checkbox-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+        .checkbox-item { display: flex; align-items: center; }
+        .checkbox-item input { width: 18px; height: 18px; margin-right: 8px; cursor: pointer; }
+        .checkbox-item label { margin: 0; cursor: pointer; font-weight: normal; font-size: 13px; }
+        button { width: 100%; padding: 12px; margin-top: 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        button:hover { background: #5568d3; }
+        .result { margin-top: 30px; display: none; }
+        .result.show { display: block; }
+        .saju-box { background: #667eea; color: white; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .saju-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
+        .saju-item { background: rgba(255,255,255,0.2); padding: 15px; border-radius: 5px; text-align: center; }
+        .analysis-item { background: #f9f9f9; border-left: 4px solid #667eea; padding: 20px; margin-bottom: 15px; border-radius: 5px; }
+        .analysis-item h3 { color: #667eea; margin-bottom: 10px; }
+        .analysis-item p { color: #555; line-height: 1.6; margin-bottom: 10px; text-align: justify; }
+        .error { background: #ffe0e0; color: #d32f2f; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 사주 분석 시스템</h1>
+        
+        <div class="form-group">
+            <label>이름 *</label>
+            <input type="text" id="name" value="홍길동" placeholder="이름 입력">
+        </div>
+
+        <div class="form-group">
+            <label>성별 *</label>
+            <select id="gender">
+                <option value="남자">남자</option>
+                <option value="여자">여자</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>생년월일 *</label>
+            <input type="date" id="birthDate" value="1990-01-01">
+        </div>
+
+        <div class="form-group">
+            <label>시간 (0-23) *</label>
+            <input type="number" id="hour" value="14" min="0" max="23">
+        </div>
+
+        <div class="form-group">
+            <label>분 (0-59) *</label>
+            <input type="number" id="minute" value="30" min="0" max="59">
+        </div>
+
+        <div class="checkbox-group">
+            <h3>분석 항목 선택 (선택된 항목만 분석됩니다)</h3>
+            <div class="checkbox-list">
+                <div class="checkbox-item"><input type="checkbox" value="기본 성향" checked><label>기본 성향</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="오행 분석" checked><label>오행 분석</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="십성 분석" checked><label>십성 분석</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="강점·약점" checked><label>강점·약점</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="인간관계운" checked><label>인간관계운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="연애운" checked><label>연애운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="결혼운" checked><label>결혼운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="궁합" checked><label>궁합</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="재물운" checked><label>재물운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="직업운" checked><label>직업운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="사업운" checked><label>사업운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="학업운" checked><label>학업운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="이직·취업운" checked><label>이직·취업운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="대운" checked><label>대운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="세운" checked><label>세운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="월운" checked><label>월운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="건강운" checked><label>건강운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="가족운" checked><label>가족운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="자녀운" checked><label>자녀운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="이사·이동운" checked><label>이사·이동운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="문서·계약운" checked><label>문서·계약운</label></div>
+                <div class="checkbox-item"><input type="checkbox" value="귀인운" checked><label>귀인운</label></div>
+            </div>
+        </div>
+
+        <button type="button" onclick="calculate()">📊 사주 계산 및 분석</button>
+
+        <div class="result" id="result">
+            <div id="errorDiv"></div>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const heavenlyStem = ['갑', '을', '병', '정', '무', '기', '경', '신', '임', '계'];
+        const earthlyBranch = ['자', '축', '인', '묘', '진', '사', '오', '미', '신', '유', '술', '해'];
+        const elementMap = {
+            '갑': '목', '을': '목', '병': '화', '정': '화', '무': '토', '기': '토',
+            '경': '금', '신': '금', '임': '수', '계': '수',
+            '자': '수', '축': '토', '인': '목', '묘': '목', '진': '토', '사': '화',
+            '오': '화', '미': '토', '신': '금', '유': '금', '술': '토', '해': '수'
+        };
+
+        function calculate() {
+            try {
+                const name = document.getElementById('name').value || '사용자';
+                const gender = document.getElementById('gender').value;
+                const birthDate = document.getElementById('birthDate').value;
+                const hour = parseInt(document.getElementById('hour').value) || 0;
+                const minute = parseInt(document.getElementById('minute').value) || 0;
+
+                if (!birthDate) {
+                    showError('생년월일을 입력해주세요');
+                    return;
+                }
+
+                const checkedItems = [];
+                document.querySelectorAll('.checkbox-item input[type="checkbox"]:checked').forEach(cb => {
+                    checkedItems.push(cb.value);
+                });
+
+                if (checkedItems.length === 0) {
+                    showError('최소 1개 이상의 분석 항목을 선택해주세요');
+                    return;
+                }
+
+                const [year, month, day] = birthDate.split('-').map(Number);
+                const saju = calculateSaju(year, month, day, hour, minute);
+                
+                displayResult(name, gender, saju, checkedItems);
+            } catch (e) {
+                showError('오류가 발생했습니다: ' + e.message);
+            }
+        }
+
+        function calculateSaju(year, month, day, hour, minute) {
+            const yearIndex = (year - 4) % 10;
+            const monthIndex = ((year - 1900) * 12 + month - 1) % 10;
+            const dayIndex = Math.floor((new Date(year, month - 1, day) - new Date(1900, 0, 1)) / (24 * 60 * 60 * 1000)) % 10;
+            const hourIndex = Math.floor((hour + 1) / 2) % 10;
+
+            const yearGan = heavenlyStem[yearIndex];
+            const yearGi = earthlyBranch[(year - 4) % 12];
+            const monthGan = heavenlyStem[monthIndex];
+            const monthGi = earthlyBranch[(month - 1 + 2) % 12];
+            const dayGan = heavenlyStem[dayIndex];
+            const dayGi = earthlyBranch[(Math.floor((new Date(year, month - 1, day) - new Date(1900, 0, 1)) / (24 * 60 * 60 * 1000))) % 12)];
+            const hourGan = heavenlyStem[hourIndex];
+            const hourGi = earthlyBranch[Math.floor((hour + 1) / 2) % 12];
+
+            const elements = { '목': 0, '화': 0, '토': 0, '금': 0, '수': 0 };
+            [yearGan, yearGi, monthGan, monthGi, dayGan, dayGi, hourGan, hourGi].forEach(char => {
+                if (elementMap[char]) elements[elementMap[char]]++;
+            });
+
+            const total = Object.values(elements).reduce((a, b) => a + b, 0);
+            const elementRatio = {};
+            Object.keys(elements).forEach(key => {
+                elementRatio[key] = Math.round((elements[key] / total) * 100);
+            });
+
+            return {
+                year: `${yearGan}${yearGi}`,
+                month: `${monthGan}${monthGi}`,
+                day: `${dayGan}${dayGi}`,
+                hour: `${hourGan}${hourGi}`,
+                elementRatio: elementRatio
+            };
+        }
+
+        function getAnalysis(itemName, name, saju) {
+            const dominantElement = Object.entries(saju.elementRatio).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+
+            const analyses = {
+                '기본 성향': `${name}님은 ${dominantElement} 기운이 강한 성향입니다. 이는 새로운 것을 추구하고 변화에 민감한 진취적인 성격을 의미합니다. ${name}님의 천간과 지지 배치를 보면, 외향적 표현력과 내향적 사고력의 균형이 특정 방향으로 기울어져 있습니다.\n\n이는 대인관계와 의사결정 방식에 직접적인 영향을 미칩니다. ${name}님의 기본 성향은 일상생활에서 자연스럽게 드러나는 특징입니다. 이를 이해하고 받아들이면, 자신과 타인과의 관계를 더욱 건강하게 유지할 수 있습니다.\n\n사회생활에서 ${name}님은 자신의 성향에 맞는 역할을 찾을 때 가장 큰 만족감을 느낍니다. 주변 사람들과의 상호작용에서 자신의 특성을 이해하고 상대방을 배려하는 자세가 중요합니다.\n\n${name}님의 성향은 고정적이지 않습니다. 의식적인 노력과 경험을 통해 더욱 긍정적인 방향으로 발전시킬 수 있습니다. 자신을 이해하는 것이 성공의 첫 번째 단계입니다.\n\n결론적으로 ${name}님은 현재의 성향을 바탕으로 더욱 나은 미래를 만들어갈 수 있습니다. ${name}님이 자신의 성향을 이해하고 존중한다면, 더욱 자신감 있고 행복한 삶을 살아갈 수 있을 것입니다.\n\n${name}님의 성향 분석을 통해 자신의 강점을 더욱 명확하게 인식할 수 있습니다. 이를 바탕으로 더욱 효과적인 인생 전략을 세울 수 있을 것입니다.\n\n${name}님이 자신의 성향을 긍정적으로 활용한다면, 사회생활에서 더욱 큰 성공을 거둘 수 있습니다.\n\n현재 ${name}님의 상황을 분석해보면, 자신의 성향과 일치하는 환경을 찾는 것이 중요합니다.\n\n${name}님의 성향은 시간이 지남에 따라 더욱 정교해질 수 있습니다. 지속적인 자기 계발이 필요합니다.\n\n결국 ${name}님의 성향을 이해하고 존중하는 것이 행복한 인생의 첫 걸음입니다.`,
+
+                '오행 분석': `${name}님의 오행 구성을 분석하면, ${dominantElement}이 ${saju.elementRatio[dominantElement]}%로 가장 강합니다. 이는 ${name}님의 성향과 운명에 큰 영향을 미칩니다. 오행의 불균형은 ${name}님의 강점과 약점을 명확하게 보여줍니다.\n\n강한 오행은 ${name}님이 잘할 수 있는 분야를 나타냅니다. 약한 오행은 보완이 필요한 부분을 나타냅니다. ${name}님이 강한 ${dominantElement} 기운을 활용하면, 현재 상황에서 최대한의 성과를 거둘 수 있습니다.\n\n특히 이 기운과 관련된 분야에서 뛰어난 능력을 발휘할 수 있습니다. 반면 약한 기운을 보충하기 위해서는 의식적인 노력이 필요합니다. 해당 오행의 색상을 자주 접하거나, 관련 활동을 하는 것이 도움이 됩니다.\n\n${name}님의 오행 균형을 맞추는 것이 운을 개선하는 핵심입니다. 현재의 불균형을 인식하고 보완하려는 노력이 중요합니다. 오행의 상생 관계를 고려하면, ${name}님은 특정 분야에서 더욱 큰 성공을 거둘 수 있습니다.\n\n${name}님의 오행 특성을 이해하면, 인생의 주요 결정을 할 때 더욱 명확한 기준을 가질 수 있습니다. 이 분석을 바탕으로 ${name}님이 의식적인 노력을 기울인다면, 더욱 나은 미래를 만들어갈 수 있을 것입니다.\n\n${name}님의 오행 구성은 현재의 상황뿐만 아니라 앞으로의 발전 가능성을 보여줍니다.\n\n오행의 상극 관계를 피하고 상생 관계를 활용하는 것이 중요합니다.\n\n${name}님이 자신의 오행 특성을 이해한다면, 더욱 효율적인 인생 계획을 세울 수 있습니다.\n\n현재 ${name}님의 오행 균형 상태를 유지하거나 개선하는 것이 목표입니다.`,
+
+                '십성 분석': `${name}님의 십성 분석을 통해 성격의 세부 특성과 인생의 다양한 영역을 이해할 수 있습니다. 십성은 일간을 중심으로 다른 천간들과의 관계를 나타냅니다. ${name}님의 일간을 기준으로 본 십성 배치는 자기 표현, 창의성, 재물, 권위 등 인생의 여러 측면을 나타냅니다.\n\n이를 통해 ${name}님의 강점과 약점을 더욱 구체적으로 파악할 수 있습니다. 비견과 겁재는 ${name}님의 자기 주장과 독립심을 나타냅니다. 이 요소가 강하면 자존감이 높지만, 과하면 고집이 될 수 있습니다.\n\n식신과 상관은 ${name}님의 창의성과 표현력을 나타냅니다. 이 요소가 강하면 예술적 감각이 뛰어나고, 약하면 표현에 어려움을 겪을 수 있습니다. 정재와 편재는 ${name}님의 재물 운을 나타냅니다. 정재는 안정적인 수입을, 편재는 기회의 재물을 의미합니다.\n\n정관과 편관은 ${name}님의 권위와 책임감을 나타냅니다. 이 요소의 강약에 따라 리더십 능력이 결정됩니다. 인성은 ${name}님의 학문과 지혜를 나타냅니다. 이 요소가 강하면 학습 능력이 뛰어나고, 약하면 실행력이 강할 수 있습니다.\n\n${name}님의 십성 배치를 종합적으로 분석하면, 현재의 상황과 앞으로의 방향을 더욱 명확하게 이해할 수 있습니다. 이를 바탕으로 자신을 개발한다면, 더욱 성공적인 인생을 만들어갈 수 있을 것입니다.\n\n${name}님의 십성 특성을 이해하면, 인생의 주요 결정을 할 때 더욱 명확한 기준을 가질 수 있습니다.\n\n십성의 길흉을 파악하고 활용하는 것이 중요합니다.\n\n${name}님의 십성 분석을 통해 자신의 역할을 더욱 명확하게 인식할 수 있습니다.`,
+
+                '강점·약점': `${name}님의 가장 큰 강점은 추진력과 개척정신입니다. 이러한 강점은 ${name}님이 어려운 상황에서도 목표를 향해 나아갈 수 있게 해줍니다. ${name}님의 강점은 단순한 개인적 특성을 넘어 주변 사람들에게도 긍정적인 영향을 미칩니다.\n\n이를 적절하게 활용하면 사회적 성공도 함께 거둘 수 있습니다. 반면 ${name}님의 약점은 성급함과 무리한 추진입니다. 이러한 약점을 인식하는 것이 개선의 첫 단계입니다. ${name}님의 약점은 결점이 아니라 개선의 기회입니다.\n\n약점을 보완하려는 의식적인 노력이 ${name}님을 더욱 완성된 인격으로 만들어줄 것입니다. ${name}님이 자신의 강점을 최대한 활용하면서 약점을 보완한다면, 현재보다 훨씬 더 큰 성과를 거둘 수 있습니다.\n\n특히 약한 기운을 의식적으로 보충하는 것이 중요합니다. 이를 통해 ${name}님의 약점을 효과적으로 보완할 수 있습니다. ${name}님의 강점과 약점을 종합적으로 이해하면, 더욱 효과적인 인생 전략을 세울 수 있습니다.\n\n${name}님이 자신의 강점에 자신감을 가지면서도 약점을 겸손하게 받아들인다면, 더욱 균형 잡힌 인격으로 성장할 수 있을 것입니다.\n\n${name}님의 강점을 더욱 발전시키기 위한 노력이 필요합니다.\n\n약점을 보완하는 것이 현재의 과제입니다.\n\n${name}님의 강점과 약점의 균형을 맞추는 것이 성공의 열쇠입니다.\n\n현재 ${name}님의 상황에서 강점을 최대한 활용하세요.`,
+
+                '인간관계운': `${name}님의 인간관계는 ${dominantElement} 기운의 특성에 따라 독특한 패턴을 보입니다. 이를 이해하면 더욱 건강한 관계를 유지할 수 있습니다. ${name}님은 새로운 인간관계를 빠르게 형성하는 경향이 있습니다.\n\n주도적인 역할을 자연스럽게 맡게 되며, 사람들을 이끌어가는 능력이 있습니다. ${name}님이 주의해야 할 점은 자신의 의견을 강하게 주장하다 보니 상대방이 위축될 수 있다는 점입니다. 이를 인식하고 상대방을 배려하는 자세가 필요합니다.\n\n${name}님이 상대방의 의견을 경청하고 다양한 관점을 수용하는 자세를 갖춘다면, 더욱 풍요로운 인간관계를 만들 수 있습니다. ${name}님의 인간관계 운은 현재의 상황뿐만 아니라 앞으로의 발전 가능성을 보여줍니다.\n\n${name}님이 자신의 인간관계 패턴을 이해하고 개선하려는 노력을 기울인다면, 더욱 깊고 의미 있는 관계를 형성할 수 있을 것입니다. ${name}님의 인간관계 운을 바탕으로 현재의 관계를 재평가하고 개선한다면, 더욱 행복한 인생을 만들어갈 수 있습니다.\n\n${name}님의 인간관계 특성을 이해하면, 더욱 효과적인 소통이 가능합니다.\n\n상대방을 존중하는 자세가 좋은 관계의 기초입니다.\n\n${name}님의 인간관계 운을 활용하여 더욱 좋은 인간관계를 만드세요.\n\n현재 ${name}님의 인간관계를 점검하고 개선할 시점입니다.`,
+
+                '연애운': `${name}님의 연애운은 ${dominantElement} 기운의 특성에 따라 결정됩니다. 이를 이해하면 더욱 행복한 연애를 할 수 있습니다. ${name}님은 주도적이고 열정적인 연애 스타일을 보입니다.\n\n상대방을 적극적으로 추구하고 새로운 경험을 함께 나누고자 합니다. 이는 긍정적인 특성이지만, 상대방의 페이스를 존중하는 것도 중요합니다. 너무 빠르게 진행하지 않는 것이 중요합니다.\n\n${name}님의 연애에서 성공하려면 상대방의 의견을 존중하고 배려하는 자세가 필요합니다. 약한 기운을 보완하는 상대방을 만난다면, 더욱 조화로운 관계를 이룰 수 있습니다. ${name}님의 연애 운은 현재의 상황뿐만 아니라 앞으로의 발전 가능성을 보여줍니다.\n\n${name}님이 자신의 연애 스타일을 이해하고 상대방을 배려한다면, 더욱 행복한 연애를 할 수 있을 것입니다. ${name}님의 연애 운을 바탕으로 현재의 관계를 재평가한다면, 더욱 의미 있는 연애를 만들어갈 수 있습니다.\n\n${name}님이 진심으로 상대방을 대한다면, 더욱 깊고 행복한 연애를 경험할 수 있을 것입니다.\n\n${name}님의 연애 스타일을 상대방에게 명확하게 표현하세요.\n\n상대방의 의견을 더욱 경청하는 자세가 필요합니다.\n\n${name}님의 연애 운을 활용하여 더욱 행복한 관계를 만드세요.`,
+
+                '결혼운': `${name}님의 결혼운은 장기적인 인생 계획과 깊은 관련이 있습니다. 전반적으로 결혼 운은 양호한 편입니다. ${name}님은 주도적인 역할을 하는 배우자가 될 가능성이 높습니다.\n\n가족을 이끌어가는 능력이 있습니다. 이는 가정을 안정적으로 운영하는 데 도움이 됩니다. ${name}님이 배우자와의 관계에서 성공하려면 주도적 성향을 조절하고 배우자의 의견을 존중해야 합니다.\n\n약한 기운을 보완하는 배우자를 만난다면, 더욱 조화로운 결혼 생활을 할 수 있습니다. ${name}님의 결혼 운은 현재의 상황뿐만 아니라 앞으로의 발전 가능성을 보여줍니다. ${name}님이 배우자를 진심으로 이해하고 배려한다면, 더욱 행복한 결혼 생활을 할 수 있을 것입니다.\n\n${name}님의 결혼 운을 바탕으로 현재의 관계를 재평가한다면, 더욱 의미 있는 결혼 생활을 만들어갈 수 있습니다. ${name}님이 진심과 신뢰를 바탕으로 한 소통을 유지한다면, 오랫동안 행복한 결혼을 유지할 수 있을 것입니다.\n\n${name}님의 결혼 운은 긍정적인 방향으로 흐르고 있습니다.\n\n배우자와의 소통을 더욱 중시하세요.\n\n${name}님의 결혼 생활이 더욱 행복하기 위한 노력이 필요합니다.`,
+
+                '궁합': `궁합 분석은 두 사람의 생년월일을 통해 오행의 조화를 살펴봅니다. 단순히 '잘 맞는다' 또는 '안 맞는다'라는 판단보다는 각자의 특성을 이해하고 보완하는 관계인지를 파악하는 것이 중요합니다. ${name}님의 사주 특성상 ${dominantElement} 기운이 강합니다.\n\n궁합을 판단할 때는 상대방이 이러한 약점을 보완할 수 있는 특성을 가지고 있는지 확인해야 합니다. 좋은 궁합은 오행이 조화로운 것만이 아니라, 서로 다른 부분을 존중하고 보완하려는 의지가 있을 때 형성됩니다.\n\n${name}님과 상대방의 오행 구성이 상생 관계를 이룬다면, 더욱 조화로운 관계를 기대할 수 있습니다. ${name}님의 약한 부분을 상대방이 보완할 수 있다면, 서로에게 긍정적인 영향을 미칠 수 있습니다.\n\n궁합이 좋지 않다고 해서 관계가 반드시 실패하는 것은 아닙니다. 서로를 이해하고 배려하는 노력이 더욱 중요합니다. ${name}님이 상대방의 특성을 이해하고 존중한다면, 어떤 궁합이든 좋은 관계를 만들 수 있습니다.\n\n상대방의 생년월일 정보를 제공하시면, 더욱 구체적인 궁합 분석을 제공할 수 있습니다.\n\n궁합은 참고만 하고 노력을 더욱 중시하세요.\n\n${name}님과 상대방의 관계를 더욱 소중히 여기세요.`,
+
+                '재물운': `${name}님의 재물운은 오행의 재성 배치와 대운의 흐름에 따라 결정됩니다. 전반적으로 재물 운은 양호한 편입니다. ${name}님은 새로운 기회를 발견하고 빠르게 대응하는 능력이 있습니다.\n\n다양한 수입 기회를 만날 수 있습니다. 이는 재물 증식의 기초가 됩니다. ${name}님이 재물을 증식하려면 먼저 자신의 소비 패턴을 분석하고 불필요한 지출을 줄이는 것이 중요합니다.\n\n새로운 투자 기회에 신중하게 접근해야 합니다. 충동적인 결정을 피하고 신중한 검토 후 결정하는 것이 중요합니다. ${name}님의 약한 기운을 보충하는 방향의 투자나 사업이 더욱 성공할 가능성이 높습니다.\n\n${name}님의 재물 운은 현재의 상황뿐만 아니라 앞으로의 발전 가능성을 보여줍니다. ${name}님이 재물 운을 바탕으로 현명한 경제 계획을 세운다면, 더욱 안정적인 재정 상황을 만들 수 있을 것입니다.\n\n${name}님이 장기적인 관점에서 재물을 관리한다면, 더욱 풍요로운 인생을 만들어갈 수 있을 것입니다.\n\n현명한 소비와 투자가 재물 운을 개선합니다.\n\n${name}님의 재물 운을 최대한 활용하세요.`,
+
+                '직업운': `${name}님의 직업운은 천간과 지지의 배치, 그리고 오행의 특성에 따라 결정됩니다. ${name}님에게 적합한 직업 분야가 있습니다. ${name}님은 창의성과 개척정신이 필요한 직업이 적합합니다.\n\n기획, 마케팅, 창업, 영업 등에서 뛰어난 성과를 낼 수 있습니다. 이는 ${name}님의 강점을 최대한 활용할 수 있는 분야입니다. ${name}님이 직업을 선택할 때는 자신의 성향과 맞는지 확인하는 것이 중요합니다.\n\n단기적인 경제 이득보다는 장기적인 경력 발전과 개인의 성장을 고려해야 합니다. ${name}님의 현재 직업이 자신의 성향과 맞지 않는다면, 자신의 강점을 활용할 수 있는 분야로의 전환을 고려해볼 가치가 있습니다.\n\n${name}님의 직업 운은 현재의 상황뿐만 아니라 앞으로의 발전 가능성을 보여줍니다. ${name}님이 자신의 직업 운을 바탕으로 현명한 선택을 한다면, 더욱 만족스러운 직업 생활을 할 수 있을 것입니다.\n\n${name}님이 자신의 강점을 최대한 활용하는 직업을 선택한다면, 더욱 큰 성공을 거둘 수 있을 것입니다.\n\n${name}님의 직업 선택이 인생의 중요한 결정입니다.\n\n현재 직업에 만족하지 못한다면 전환을 고려하세요.`,
+
+                '사업운': `${name}님의 사업운은 창업 의지, 자본금, 그리고 시장 환경 등 여러 요소가 복합적으로 작용합니다. 사주상으로는 개인의 기질과 운의 흐름이 중요한 역할을 합니다. ${name}님은 개척정신과 추진력이 있어 사업 초기 단계에서 강점을 보입니다.\n\n다만 성급함으로 인한 실패를 피해야 합니다. 이는 중요한 고려 사항입니다. ${name}님의 사업 성공의 핵심은 신중한 계획, 철저한 실행, 그리고 지속적인 개선입니다. 초기 투자 단계에서 과도한 욕심을 부리지 않고, 점진적인 확장을 추구하는 것이 중요합니다.\n\n신뢰할 수 있는 파트너나 조언자를 찾아 객관적인 의견을 듣는 것도 중요합니다. ${name}님의 사업 운을 바탕으로 현명한 사업 계획을 세운다면, 더욱 성공적인 사업을 할 수 있을 것입니다.\n\n${name}님이 자신의 강점을 최대한 활용하면서 약점을 보완한다면, 사업에서 더욱 큰 성공을 거둘 수 있을 것입니다. ${name}님의 사업 운은 현재의 상황뿐만 아니라 앞으로의 발전 가능성을 보여줍니다.\n\n신중한 계획이 사업 성공의 기초입니다.\n\n${name}님의 사업 운을 최대한 활용하세요.`,
+
+                '학업운': `${name}님의 학업운은 집중력, 이해력, 그리고 지속력에 따라 결정됩니다. ${name}님에게는 특정한 학습 스타일이 있습니다. ${name}님은 빠른 이해력과 새로운 개념에 대한 호기심이 강습니다.\n\n다만 깊이 있는 학습보다는 넓이 있는 학습을 선호하는 경향이 있습니다. 이를 인식하고 보완하는 것이 중요합니다. ${name}님의 학업 성공의 비결은 자신의 학습 스타일을 파악하고 그에 맞는 방법을 찾는 것입니다.\n\n단순히 많은 시간을 투자하는 것보다는 효율적인 학습 방법을 개발하는 것이 더욱 중요합니다. 특히 약한 부분을 보완하려는 노력과 꾸준함이 최종 성공을 결정합니다. ${name}님의 학업 운을 바탕으로 현명한 학습 계획을 세운다면, 더욱 높은 성과를 거둘 수 있을 것입니다.\n\n${name}님이 자신의 강점을 최대한 활용하면서 약점을 보완한다면, 학업에서 더욱 큰 성공을 거둘 수 있을 것입니다.\n\n효율적인 학습 방법 개발이 중요합니다.\n\n${name}님의 학업 운을 활용하세요.`,
+
+                '이직·취업운': `${name}님의 이직과 취업 운은 신중한 판단과 적절한 타이밍이 중요합니다. 이는 인생의 중요한 전환점이 될 수 있습니다. ${name}님은 새로운 기회에 민감하게 반응하여 취업 기회를 빠르게 포착할 수 있습니다.\n\n다만 충동적인 결정을 피해야 합니다. 충분한 검토 후 결정하는 것이 중요합니다. ${name}님이 취업이나 이직을 고려할 때는 먼저 자신의 강점과 약점을 파악해야 합니다. 그에 맞는 직무와 기업 문화를 선택하는 것이 중요합니다.\n\n단기적인 연봉보다는 장기적인 경력 발전과 개인의 성장을 고려해야 합니다. ${name}님의 이직·취업 운을 바탕으로 현명한 선택을 한다면, 더욱 만족스러운 직업 생활을 할 수 있을 것입니다.\n\n${name}님이 자신의 강점을 최대한 활용하면서 약점을 보완한다면, 더욱 큰 성공을 거둘 수 있을 것입니다. ${name}님의 이직·취업 운은 현재의 상황뿐만 아니라 앞으로의 발전 가능성을 보여줍니다.\n\n신중한 검토 후 결정하세요.\n\n${name}님의 이직·취업 운을 활용하세요.`,
+
+                '대운': `${name}님의 대운은 10년 단위로 변하는 인생의 큰 흐름을 나타냅니다. 이를 이해하는 것은 장기적인 인생 계획을 세우는 데 매우 중요합니다. 현재의 대운 단계를 파악하면, 앞으로 10년간 어떤 기회와 도전이 있을지 예측할 수 있습니다.\n\n대운의 오행이 현재 사주의 약한 부분을 보충하는 방향이라면, 이 기간은 개인의 약점을 보완하고 성장할 수 있는 좋은 기회입니다. 반대로 약한 부분을 더욱 약하게 만드는 방향이라면, 신중한 태도와 보완 노력이 필요한 시기입니다.\n\n${name}님이 현재 진행 중인 대운의 특성을 파악하고, 이에 맞는 행동 계획을 세우는 것이 중요합니다. 발전과 기회의 대운이라면 새로운 도전을 적극적으로 추구하는 것이 좋습니다. 안정과 정리의 대운이라면 기초를 탄탄히 하는 데 집중하는 것이 효과적입니다.\n\n${name}님이 대운의 흐름을 거스르지 않고 자연스럽게 따라가면서 개인의 노력을 더한다면, 더욱 성공적인 인생을 만들 수 있을 것입니다.\n\n대운의 흐름을 이해하고 따르세요.\n\n${name}님의 대운을 활용하세요.`,
+
+                '세운': `${name}님의 세운은 1년 단위로 변하는 운의 흐름을 나타냅니다. 월운과 함께 단기적인 운의 변화를 파악하는 데 중요합니다. 올해의 세운을 분석하면, 이 한 해 동안 어떤 기회와 도전이 있을지, 그리고 어떤 분야에 집중해야 할지를 알 수 있습니다.\n\n현재 세운이 긍정적인 흐름을 보인다면, 새로운 시작과 도전에 좋은 시기입니다. 이 기간에 준비한 것들이 좋은 결과로 나타날 가능성이 높습니다. 신중함을 잃지 않으면서도 적극적으로 나아가는 것이 중요합니다.\n\n반대로 도전적인 흐름이라면, 신중한 태도와 기초 다지기에 집중하는 것이 좋습니다. ${name}님의 세운의 특성에 맞춰 월별 계획을 세운다면, 한 해를 더욱 효과적으로 보낼 수 있습니다. 각 달의 기회와 도전을 미리 준비하면, 더욱 성공적인 한 해가 될 것입니다.\n\n특히 세운과 대운이 조화를 이루는 해라면, 인생의 중요한 변화나 성취가 일어날 가능성이 높습니다.\n\n올해의 세운을 활용하세요.\n\n${name}님의 세운을 바탕으로 계획하세요.`,
+
+                '월운': `${name}님의 월운은 월별로 변하는 운의 흐름을 나타냅니다. 단기적인 계획과 의사결정에 중요한 역할을 합니다. 각 달의 에너지 흐름을 파악하면, 그 달에 어떤 활동을 추진하는 것이 좋을지 알 수 있습니다.\n\n일반적으로 상반기(1월~6월)와 하반기(7월~12월)의 에너지 흐름이 다릅니다. 상반기가 발전과 성장의 시기라면, 새로운 프로젝트나 도전을 추진하는 것이 좋습니다. 하반기가 정리와 안정의 시기라면, 상반기의 성과를 정리하고 기초를 다지는 데 집중하는 것이 효과적입니다.\n\n개인의 생일이 속한 달(생월)과 현재 월의 관계도 중요합니다. 생월과 조화를 이루는 달에는 개인의 에너지가 강해집니다. 중요한 결정이나 도전을 추진하기 좋습니다. 반대로 충돌하는 달에는 신중한 태도를 유지하고 무리한 결정을 피하는 것이 좋습니다.\n\n${name}님이 월운을 바탕으로 월별 계획을 세운다면, 더욱 효율적인 한 해를 만들어갈 수 있을 것입니다.\n\n월운을 활용하여 계획하세요.\n\n${name}님의 월운을 바탕으로 행동하세요.`,
+
+                '건강운': `${name}님의 건강운은 오행의 특성과 체질적 경향에 따라 결정됩니다. 이를 이해하는 것은 예방적 건강 관리에 매우 중요합니다. ${name}님은 간과 담의 건강 관리가 특히 중요합니다.\n\n스트레스로 인한 간 기능 저하를 예방해야 합니다. 규칙적인 운동과 스트레스 해소가 필요합니다. 건강 관리의 기본은 규칙적인 생활, 적절한 운동, 균형 잡힌 식사, 그리고 충분한 휴식입니다. 정기적인 건강 검진을 통해 질병을 조기에 발견하고 예방하는 것도 중요합니다.\n\n특히 약한 기운과 관련된 건강에 더욱 주의를 기울여야 합니다. ${name}님이 자신의 체질을 이해하고 맞춤형 건강 관리를 한다면, 더욱 건강한 삶을 살 수 있을 것입니다. ${name}님의 건강 운을 바탕으로 예방적 건강 관리를 한다면, 질병 없이 건강하게 살 수 있을 것입니다.\n\n${name}님이 현재부터 건강 관리에 신경 쓴다면, 앞으로의 인생을 더욱 활기차게 보낼 수 있을 것입니다.\n\n규칙적인 건강 관리가 중요합니다.\n\n${name}님의 건강을 최우선으로 하세요.`,
+
+                '가족운': `${name}님의 가족 운은 가족과의 관계를 잘 유지하는 것이 매우 중요함을 보여줍니다. 가족은 인생의 기초가 됩니다. ${name}님은 가족을 주도적으로 이끌어가는 경향이 있습니다.\n\n다만 가족 구성원의 의견도 존중해야 합니다. 부모님과의 관계에서는 효심을 잃지 않으면서도 독립적인 성인으로서의 역할을 수행하는 균형이 중요합니다. 형제자매와의 관계에서는 어린 시절의 감정적 상처를 치유하고, 성인으로서 새로운 관계를 형성하는 노력이 필요합니다.\n\n${name}님이 가족 관계를 소중히 여긴다면, 인생에서 가장 큰 지지를 받을 수 있을 것입니다. ${name}님의 가족 운을 바탕으로 가족과의 관계를 더욱 돈독히 한다면, 더욱 행복한 인생을 만들어갈 수 있을 것입니다.\n\n${name}님이 가족 구성원들을 이해하고 배려한다면, 더욱 따뜻하고 행복한 가정을 만들 수 있을 것입니다.\n\n가족 관계를 소중히 하세요.\n\n${name}님의 가족 운을 활용하세요.`,
+
+                '자녀운': `${name}님의 자녀 운은 자녀와의 관계를 잘 형성하는 것이 매우 중요함을 보여줍니다. 자녀는 부모의 또 다른 인생입니다. ${name}님은 자녀에게 독립심과 도전 정신을 심어주는 데 탁월합니다.\n\n다만 자녀의 개성과 속도를 존중해야 합니다. 과도한 기대를 부리지 않는 것이 중요합니다. 자녀와의 관계에서 중요한 것은 자녀를 부모의 기대에 맞추려 하기보다는, 자녀의 개성과 잠재력을 발견하고 계발하도록 돕는 것입니다.\n\n자녀의 생년월일을 알면, 자녀의 사주 특성에 맞는 양육 방식을 더욱 구체적으로 수립할 수 있습니다. 부모와 자녀의 궁합을 이해하면, 더욱 조화로운 가족 관계를 만들 수 있습니다. ${name}님이 자녀를 진심으로 이해하고 배려한다면, 더욱 행복한 부모-자녀 관계를 만들 수 있을 것입니다.\n\n${name}님이 자녀의 개성을 존중하면서도 적절한 지도를 제공한다면, 더욱 훌륭한 자녀로 성장하도록 도울 수 있을 것입니다.\n\n자녀의 개성을 존중하세요.\n\n${name}님의 자녀 운을 활용하세요.`,
+
+                '이사·이동운': `${name}님의 이사나 지역 이동은 인생의 중요한 전환점이 될 수 있습니다. 새로운 환경에서의 적응이 성공을 좌우합니다. ${name}님은 새로운 환경에 빠르게 적응합니다.\n\n새로운 인간관계를 형성하는 데 탁월합니다. 이사는 새로운 기회를 가져올 수 있습니다. 긍정적인 태도로 임하는 것이 좋습니다. 이사 시기를 결정할 때는 현재의 대운과 세운을 고려하는 것이 좋습니다. 발전과 기회의 운이라면 이사를 통해 새로운 기회를 맞이할 수 있습니다.\n\n안정의 운이라면 현재 위치를 다지는 것이 더 나을 수 있습니다. 이사할 지역의 방위와 오행 특성도 고려하면, 더욱 길한 이사가 될 수 있습니다. ${name}님의 이사·이동 운을 바탕으로 현명한 결정을 한다면, 더욱 성공적인 이사가 될 수 있을 것입니다.\n\n${name}님이 새로운 환경에 적응하려는 노력을 기울인다면, 더욱 좋은 결과를 얻을 수 있을 것입니다.\n\n새로운 환경에 적응하세요.\n\n${name}님의 이사·이동 운을 활용하세요.`,
+
+                '문서·계약운': `${name}님의 문서와 계약은 법적 효력을 가지는 중요한 행위입니다. 신중한 검토와 판단이 필요합니다. ${name}님은 빠른 판단으로 계약을 진행하는 경향이 있습니다.\n\n다만 중요한 계약은 충분한 검토 기간을 가져야 합니다. 계약 체결 시 주의할 점은 모든 조건을 명확히 이해하고 서면으로 남기는 것입니다. 구두 약속이나 불명확한 조건은 나중에 분쟁의 원인이 될 수 있습니다.\n\n중요한 계약은 전문가의 조언을 구하는 것이 좋습니다. 계약 후에도 조건 이행 여부를 꼼꼼히 확인하는 것이 중요합니다. ${name}님의 문서·계약 운을 바탕으로 신중한 계약을 한다면, 분쟁 없이 안전하게 거래를 할 수 있을 것입니다.\n\n${name}님이 계약 관련 사항을 세심하게 검토한다면, 더욱 안전한 거래를 할 수 있을 것입니다.\n\n신중한 검토가 중요합니다.\n\n${name}님의 문서·계약 운을 활용하세요.`,
+
+                '귀인운': `${name}님의 귀인운은 도움을 주는 사람들이 나타나는 운을 의미합니다. 이러한 좋은 인연을 소중히 여기는 것이 중요합니다. ${name}님은 전반적으로 귀인운이 좋은 편입니다.\n\n인생의 주요 결정 순간에 도움을 줄 사람들이 나타날 가능성이 높습니다. 귀인은 반드시 눈에 띄는 큰 도움만을 의미하지 않습니다. 때로는 작은 조언이나 정보 제공, 또는 정서적 지지도 귀인의 역할을 합니다.\n\n${name}님이 주변의 모든 인간관계를 소중히 여긴다면, 자연스럽게 귀인을 만날 수 있을 것입니다. 특히 어려운 시기에 도움을 준 사람들과의 관계를 오래 유지한다면, 앞으로도 계속해서 귀인의 도움을 받을 수 있을 것입니다.\n\n감사의 마음을 잃지 않고 상호 존중하는 자세가 귀인운을 더욱 강하게 만듭니다. ${name}님이 주변 사람들에게 감사를 표현한다면, 더욱 많은 귀인을 만날 수 있을 것입니다.\n\n감사의 마음을 잃지 마세요.\n\n${name}님의 귀인 운을 활용하세요.`
+            };
+
+            return analyses[itemName] || `${name}님의 ${itemName} 분석 내용입니다.`;
+        }
+
+        function displayResult(name, gender, saju, selectedItems) {
+            let html = `
+                <div class="saju-box">
+                    <h2>${name}님의 사주</h2>
+                    <div class="saju-grid">
+                        <div class="saju-item">
+                            <div>년주</div>
+                            <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">${saju.year}</div>
+                        </div>
+                        <div class="saju-item">
+                            <div>월주</div>
+                            <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">${saju.month}</div>
+                        </div>
+                        <div class="saju-item">
+                            <div>일주</div>
+                            <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">${saju.day}</div>
+                        </div>
+                        <div class="saju-item">
+                            <div>시주</div>
+                            <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">${saju.hour}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            selectedItems.forEach(item => {
+                const analysis = getAnalysis(item, name, saju);
+                html += `
+                    <div class="analysis-item">
+                        <h3>${item}</h3>
+                        ${analysis.split('\n').map(p => `<p>${p}</p>`).join('')}
+                    </div>
+                `;
+            });
+
+            document.getElementById('resultContent').innerHTML = html;
+            document.getElementById('result').classList.add('show');
+        }
+
+        function showError(message) {
+            document.getElementById('errorDiv').innerHTML = `<div class="error">${message}</div>`;
+            document.getElementById('result').classList.add('show');
+        }
+    </script>
+</body>
+</html>
